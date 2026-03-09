@@ -1,0 +1,126 @@
+
+# End-to-end tests rely on the write_byte and read_byte tests for each MMU variation
+# total points: 15
+End2End:
+  base-and-bounds:
+    value: 10
+    tests:
+      - base_bounds_write_read_basic
+      - base_bounds_multiple_writes
+      - base_bounds_invalid_addresses
+      - base_bounds_multiple_address_spaces
+      - stress_test_small
+      - RESERVE_memory_exhaustion_recovery
+      - RESERVE_resource_exhaustion_recovery
+      - RESERVE_large_data_patterns
+    functions:
+      - write_byte
+      - read_byte
+  paging:
+    value: 5
+    tests:
+      - paging_write_read_basic
+      - paging_multiple_pages
+      - paging_unmapped_pages
+      - paging_multiple_address_spaces
+      - invalid_asid_handling
+      - RESERVE_maximum_asid_operations
+      - RESERVE_cross_page_operations
+      - RESERVE_concurrent_multi_address_space
+    functions:
+      - write_byte
+      - read_byte
+
+# Base to bound tests should test individual functions of base-and-bounds and end-to-end without the read/write functions
+# Total points: 50
+BaseBounds:
+  lifecycle:
+    value: 15
+    tests:
+      - create_new_address_space
+      - multiple_address_spaces
+      - destroy_address_space
+      - RESERVE_maximum_address_spaces
+      - RESERVE_lifecycle_patterns
+    functions:
+      - create_new_address_space__base_bounds
+      - destroy_address_space__base_bounds
+  is_valid:
+    value: 15
+    tests:
+      - is_valid_basic
+    functions:
+      - base_and_bounds__is_valid
+  translate_address:
+    value: 20
+    tests:
+      - translate_address_basic
+      - calculate_physical_address
+      - check_bounds
+      - find_free_region
+      - RESERVE_boundary_edge_cases
+      - RESERVE_unusual_base_addresses
+      - RESERVE_zero_virtual_address
+      - RESERVE_large_virtual_addresses
+    functions:
+      - translate_address__base_bounds
+      - base_bounds__calculate_physical_address
+      - base_bounds__check_bounds
+      - base_bounds__find_free_region
+
+# Paging tests should test individual helper functions, overall mmu functions, and end-to-end without read/write functions
+# Total points: 35
+Paging:
+  lifecycle:
+    value: 5
+    tests:
+      - create_new_address_space
+      - destroy_address_space
+      - RESERVE_complex_page_table_manipulation
+    functions:
+      - create_new_address_space__paging
+      - destroy_address_space__paging
+  is_valid:
+    value: 5
+    tests:
+      - is_valid_basic
+    functions:
+      - paging__is_valid
+  translate_address:
+    value: 5
+    tests:
+      - translate_address_basic
+      - RESERVE_address_translation_edge_case
+    functions:
+      - translate_address__paging
+  paging_helpers__is_valid:
+    value: 10
+    tests:
+      - is_entry_valid
+      - is_read_enabled
+      - is_write_enabled
+      - is_execute_enabled
+    functions:
+      - paging__is_entry_valid
+      - paging__is_read_enabled
+      - paging__is_write_enabled
+      - paging__is_execute_enabled
+  paging_helpers__translate_address:
+    value: 10
+    tests:
+      - get_vpn_from_va
+      - convert_PageTableEntry_to_PFN
+      - find_free_page
+      - map_page
+      - get_pagetableentry
+      - RESERVE_page_boundary_addresses
+      - RESERVE_pte_metadata_combinations
+      - RESERVE_boundary_pfn_values
+      - RESERVE_maximum_pages_allocated
+      - RESERVE_vpn_edge_cases
+    functions:
+      - paging__get_vpn_from_va
+      - paging__convert_PageTableEntry_to_PFN
+      - paging__find_free_page
+      - paging__map_page
+      - paging__get_pagetableentry
