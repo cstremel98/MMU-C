@@ -32,46 +32,27 @@
 #define EXEC_BIT (NUM_BITS_IN_BYTE*sizeof(AddressBasis) - 3)   // Page can be executed
 
 
-/**
- * Address Space Identifier (ASID) - identifies which process/address space is being accessed
- * Range: 0 to MAX_ASIDS-1
- */
 typedef uint8_t ASID;
 
-/**
- * Type system for addresses and address components
- *
- * All address types are built on the same underlying type (AddressBasis) but use
- * different names to clarify their purpose and make the code more readable.
- */
-
-// Base type - all addresses and address components are built on this
 typedef PAGETABLE_ENTRY_TYPE AddressBasis;
 
-// General address types
 typedef AddressBasis AddressMask;       // Bit masks for extracting address components
 typedef AddressBasis VirtualAddress;    // Addresses as seen by programs (what programs use)
 typedef AddressBasis PhysicalAddress;   // Real addresses in physical memory (what hardware uses)
 typedef AddressBasis OFFSET;            // Offset within a page (both base-bounds and paging)
 
-// Paging-specific types
 typedef AddressBasis VPN;               // Virtual Page Number (high bits of virtual address in paging)
 typedef AddressBasis PFN;               // Page Frame Number (physical page identifier, may include metadata bits)
 
-// Base-and-bounds specific types
 typedef AddressBasis BaseAddress;       // Base address of allocated memory region
 typedef AddressBasis BoundLimit;        // Size limit of memory region (in bytes)
 typedef AddressBasis BoundOffset;       // Offset within a memory region
 
-/**
- * Page and page frame structures
- */
 typedef struct Page {
   char data[PAGE_SIZE];                 // Raw page data
 } Page;
 typedef Page PageFrame;                 // Alias for clarity - same as Page but represents physical memory
 
-// Additional type aliases for page table implementation
 typedef PFN PageTableEntry;                 // Page table entries store PFN + metadata bits
 typedef PageTableEntry PageDirectoryEntry;  // Page directory entries (same format as PTE)
 typedef Page PageTableChunk;                // Pages that contain page table data

@@ -18,13 +18,17 @@
  */
 
 PhysicalAddress base_bounds__calculate_physical_address(BaseAddress base, VirtualAddress va) {
-  // todo
-  return 0;
+	
+	PhysicalAddress pa = base + va;
+
+	return pa;
 }
 
 bool base_bounds__check_bounds(BoundLimit bound, VirtualAddress va) {
-  // todo
-  return false;
+  if(!(va >= bound)) {
+		return true;
+	}
+	return false;
 }
 
 
@@ -74,17 +78,40 @@ PFN paging__convert_PageTableEntry_to_PFN(PageTableEntry pte)  {
  */
 
 BaseAddress base_bounds__find_free_region(MMU* m) {
-  // todo
-  return 0;
+	int x = 0;
+	
+	//?
+	for(int i=0; i<MAX_ASIDS; i++) {
+		//First available region
+		if(m->memory_chunk_used[i] == false && i == 0) {
+			return 0;
+		}
+		//Used memory
+		if(m->memory_chunk_used[i] == true) {
+			//i+1 to match numbering
+			x = i+1;
+		}
+	}
+	x = x * DEFAULT_ADDRESS_SPACE_SIZE;
+	
+	return x;
 }
 
 ASID create_new_address_space__base_bounds(MMU* m) {
-  // todo
-  return MAX_ASIDS;
+	ASID asid = m->address_spaces->asid;
+	m->address_spaces[asid].in_use = true;
+	m->address_spaces[asid].registers.base_bounds.base_register = 0;
+	m->address_spaces[asid].registers.base_bounds.bound_register = DEFAULT_ADDRESS_SPACE_SIZE;
+	m->memory_chunk_used[asid] = true;
+
+	return asid;
 }
 
 void destroy_address_space__base_bounds(MMU* m, ASID asid) {
-  // todo
+	m->address_spaces[asid].in_use = false;
+	m->memory_chunk_used[asid] = false;
+	m->address_spaces[asid].registers.base_bounds.base_register = 0;
+	m->address_spaces[asid].registers.base_bounds.bound_register = 0;
 }
 
 
@@ -118,13 +145,17 @@ void destroy_address_space__paging(MMU* m, ASID asid) {
  */
 
 bool base_and_bounds__is_valid(const MMU* m, ASID asid, VirtualAddress va) {
-  // todo
-  return false;
+	if (va >= DEFAULT_ADDRESS_SPACE_SIZE) {
+		return false;
+  } else if(va >= asid) {
+		return true;
+	}
+	return false;
 }
 
 PhysicalAddress translate_address__base_bounds(const MMU* m, ASID asid, VirtualAddress va) {
-  // todo
-  return 0;
+	PhysicalAddress pa = base_bounds__calculate_physical_address(asid, va);
+	return pa;
 }
 
 

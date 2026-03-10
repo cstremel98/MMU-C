@@ -10,16 +10,6 @@
  * PHASE 1: SIMPLE HELPER FUNCTIONS (START HERE!)
  * =============================================================================
  *
- * These are pure mathematical and logical functions with no state dependencies.
- * Great for getting started - you can implement and test these immediately!
- * No complex debugging needed, just implement the logic and run tests.
- */
-
-/**
- * BASE-AND-BOUNDS HELPER FUNCTIONS
- *
- * These implement the core mathematical operations for base-and-bounds translation.
- * Simple arithmetic - perfect for building confidence early!
  */
 
 /**

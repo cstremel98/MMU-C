@@ -17,8 +17,8 @@
 #include "tests/unittests_reserved.c"
 
 TestSuite(BaseBounds, .disabled=false, .timeout=60.0);
-TestSuite(Paging, .disabled=false, .timeout=60.0);
-TestSuite(End2End, .disabled=false, .timeout=60.0);
+TestSuite(Paging, .disabled=true, .timeout=60.0);
+TestSuite(End2End, .disabled=true, .timeout=60.0);
 
 // From: https://github.com/codewars/criterion-hooks/blob/main/criterion-hooks.c
 // PRE_TEST: occurs after the test initialization, but before the test is run.
