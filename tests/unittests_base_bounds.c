@@ -232,7 +232,6 @@ Test(BaseBounds, multiple_address_spaces) {
   cr_assert_geq(asid2, 0, "Second ASID should be valid");
   cr_assert_geq(asid3, 0, "Third ASID should be valid");
   cr_assert_neq(asid1, asid2, "ASIDs should be different");
-  /*
   cr_assert_neq(asid2, asid3, "ASIDs should be different");
   cr_assert_neq(asid1, asid3, "ASIDs should be different");
 
@@ -259,6 +258,5 @@ Test(BaseBounds, multiple_address_spaces) {
   cr_assert_eq(pa1, base1 + va, "Translation should be base + VA for space 1");
   cr_assert_eq(pa2, base2 + va, "Translation should be base + VA for space 2");
   cr_assert_eq(pa3, base3 + va, "Translation should be base + VA for space 3");
-*/
   MMU__destroy(&m);
 }

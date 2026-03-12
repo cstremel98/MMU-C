@@ -18,9 +18,7 @@
  */
 
 PhysicalAddress base_bounds__calculate_physical_address(BaseAddress base, VirtualAddress va) {
-	
 	PhysicalAddress pa = base + va;
-
 	return pa;
 }
 
@@ -37,33 +35,41 @@ bool base_bounds__check_bounds(BoundLimit bound, VirtualAddress va) {
  */
 
 VPN paging__get_vpn_from_va(VirtualAddress va) {
-  // todo
-  return 0;
+	VPN vpn = va >> 10;
+	return vpn;
 }
 
 bool paging__is_entry_valid(PageTableEntry pte) {
-  // todo
-  return false;
+  if((pte >> 63 & 1ULL) == 1) {
+		return true;
+	}
+	return false;
 }
 
 bool paging__is_read_enabled(PageTableEntry pte) {
-  // todo
-  return false;
+  if((pte >> 62 & 1ULL) == 1) {
+		return true;
+	}
+	return false;
 }
 
 bool paging__is_write_enabled(PageTableEntry pte) {
-  // todo
+  if((pte >> 61 & 1ULL) == 1) {
+		return true;
+	}
   return false;
 }
 
 bool paging__is_execute_enabled(PageTableEntry pte) {
-  // todo
+  if((pte >> 60 & 1ULL) == 1) {
+		return true;
+	}
   return false;
 }
 
 PFN paging__convert_PageTableEntry_to_PFN(PageTableEntry pte)  {
-  // todo
-  return 0;
+	// Unsigned integer shift left, then shift right...newly created bits == 0
+	return ((pte << 4) >> 4);
 }
 
 
@@ -98,13 +104,17 @@ BaseAddress base_bounds__find_free_region(MMU* m) {
 }
 
 ASID create_new_address_space__base_bounds(MMU* m) {
-	ASID asid = m->address_spaces->asid;
-	m->address_spaces[asid].in_use = true;
-	m->address_spaces[asid].registers.base_bounds.base_register = 0;
-	m->address_spaces[asid].registers.base_bounds.bound_register = DEFAULT_ADDRESS_SPACE_SIZE;
-	m->memory_chunk_used[asid] = true;
+	for(int i = 0; i < MAX_ASIDS; i++) {
+		if((m->address_spaces[i].in_use == false)) {	
+			m->address_spaces[i].in_use = true;
+			m->address_spaces[i].registers.base_bounds.base_register = i * DEFAULT_ADDRESS_SPACE_SIZE;
+			m->address_spaces[i].registers.base_bounds.bound_register = DEFAULT_ADDRESS_SPACE_SIZE;
+			m->memory_chunk_used[i] = true;
 
-	return asid;
+			return m->address_spaces[i].asid;
+		} 
+	}
+	return MAX_ASIDS;
 }
 
 void destroy_address_space__base_bounds(MMU* m, ASID asid) {
@@ -120,13 +130,22 @@ void destroy_address_space__base_bounds(MMU* m, ASID asid) {
  */
 
 PFN paging__find_free_page(const MMU* m)  {
-  // todo
-  return -1;
+   for (int i = 0; i < MAX_ASIDS; i++) {
+	 	if(m->memory_chunk_used[i] == false) {
+			return i;
+		}
+  }
+	return -1;
 }
 
 ASID create_new_address_space__paging(MMU* m) {
-  // todo
-  return MAX_ASIDS;
+	for (int i = 0; i < MAX_ASIDS; i++) {
+		if(m->address_spaces[i].in_use == false) {
+			m->address_spaces[i].in_use = true;
+			return m->address_spaces[i].asid;
+		}
+	}
+	return MAX_ASIDS;
 }
 
 void destroy_address_space__paging(MMU* m, ASID asid) {
@@ -154,7 +173,7 @@ bool base_and_bounds__is_valid(const MMU* m, ASID asid, VirtualAddress va) {
 }
 
 PhysicalAddress translate_address__base_bounds(const MMU* m, ASID asid, VirtualAddress va) {
-	PhysicalAddress pa = base_bounds__calculate_physical_address(asid, va);
+	PhysicalAddress pa = base_bounds__calculate_physical_address(m->address_spaces[asid].registers.base_bounds.base_register, va);
 	return pa;
 }
 
